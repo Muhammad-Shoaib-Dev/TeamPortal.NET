@@ -7,10 +7,14 @@ namespace TeamPortal.NET.Models
     {
         [Key]
         public int EmployeeId { get; set; }
+        [Required]
         public string? FirstName { get; set; }
+        [Required]
         public string? LastName { get; set; }
         public string? Email { get; set; }
+        [Required]
         public long? PhoneNumber { get; set; }
+        [Required]
         public string? Designation { get; set; }
         public int? Salary { get; set; }
         public DateTime? DateOfJoining { get; set; }

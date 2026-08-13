@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
 
@@ -15,15 +17,6 @@ namespace TeamPortal.NET.Controllers
         {
             IEnumerable<Employee> employees = _context.Employees.ToList();
             return View(employees);
-        }
-        public IActionResult Details(int id)
-        {
-            var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-            return View(employee);
         }
         [HttpGet]
         public IActionResult Create()
@@ -65,7 +58,19 @@ namespace TeamPortal.NET.Controllers
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Employee emp = _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
+            Employee? emp = _context.Employees.Find(id);
+            if (emp == null)
+            {
+                return NotFound();
+            }
+            return View(emp);
+
+        }
+        [HttpPost]
+        [ActionName("Delete")]
+        public IActionResult DeleteConfirm(int id)
+        {
+            Employee? emp = _context.Employees.Find(id);
             if (emp == null)
             {
                 return NotFound();
