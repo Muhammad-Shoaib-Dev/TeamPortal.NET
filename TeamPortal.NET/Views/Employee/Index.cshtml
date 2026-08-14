@@ -6,6 +6,7 @@
             <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">Create Employee</a>
     <thead>
         <tr>
+            <th>Profile photo </th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
@@ -16,6 +17,7 @@
         @foreach (var employee in Model)
         {
             <tr>
+                <td><img src="@employee.ProfilePicture" width="60" height="60" /></td>
                 <td>@employee.FirstName</td>
                 <td>@employee.LastName</td>
                 <td>@employee.Email</td>

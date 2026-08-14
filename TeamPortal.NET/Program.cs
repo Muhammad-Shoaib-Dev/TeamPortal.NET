@@ -15,6 +15,7 @@ namespace TeamPortal.NET
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
+            app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

@@ -1,7 +1,7 @@
 ﻿@model Employee
 <h1>Edit Employee</h1>
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="EmployeeId" formenctype="multipart/form-data" />
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="EmployeeId" />
     <div class="form-group">
         <label>Current Picture</label><br />
         @if (!string.IsNullOrEmpty(Model.ProfilePicture))

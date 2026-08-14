@@ -21,6 +21,7 @@ namespace TeamPortal.NET.Models
         [ForeignKey("DepartmentId")]
         public int DepartmentId { get; set; }
         public bool? IsActive { get; set; }
+        public string? ProfilePicture { get; set; }
 
     }
 }
