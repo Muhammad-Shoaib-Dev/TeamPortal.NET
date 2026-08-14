@@ -1,8 +1,19 @@
 ﻿@model Employee
 <h1>Edit Employee</h1>
-
 <form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="EmployeeId" />
+    <input type="hidden" asp-for="EmployeeId" formenctype="multipart/form-data" />
+    <div class="form-group">
+        <label>Current Picture</label><br />
+        @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+        {
+            <img src="@Model.ProfilePicture" width="80" height="80";" />
+        }
+    </div>
+    <div class="form-group">
+        <label>Profile Picture</label>
+        <input  type="file" name="profileImage" class="form-control" />
+        <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+    </div>
 <div class="form-group">
     <label asp-for="FirstName" class="control-label"></label>
     <input asp-for="FirstName" class="form-control" />
