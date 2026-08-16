@@ -16,10 +16,10 @@
         </tr>
         <tr>
             <th>Profile photo </th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Department</th>
+            <th><a asp-action="Index" asp-route-Sort="@ViewData["NameSortparam"]">Name</a></th>
+            <th><a asp-action="Index" asp-route-Sort="@ViewData["EmailSortparam"]">Email</a></th>
+            <th><a asp-action="Index" asp-route-Sort="@ViewData["DepartmentIDSortparam"]">Department ID</a></th>
+            <th><a asp-action="Index" asp-route-Sort="@ViewData["DesignationSortparam"]">Designation</a></th>
         </tr>
     </thead>
     <tbody>
@@ -27,10 +27,10 @@
         {
             <tr>
                 <td><img src="@employee.ProfilePicture" width="60" height="60" /></td>
-                <td>@employee.FirstName</td>
-                <td>@employee.LastName</td>
+                <td>@employee.FirstName @employee.LastName</td>
                 <td>@employee.Email</td>
                 <td>@employee.DepartmentId</td>
+                <td>@employee.Designation</td>
                 <td>
                     <a asp-controller="Employee" asp-action="Edit" asp-route-id="@employee.EmployeeId" class="btn btn-secondary">Edit</a>
                     <a asp-controller="Employee" asp-action="Delete" asp-route-id="@employee.EmployeeId" class="btn btn-danger">Delete</a>

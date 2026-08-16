@@ -14,9 +14,15 @@ namespace TeamPortal.NET.Controllers
         {
           this._context = _context;
         }
-        public IActionResult Index(string Search)
+        public IActionResult Index(string Search , string Sort)
         {
             ViewData["CurrentFilter"] = Search;
+
+            ViewData["NameSortparam"] = string.IsNullOrEmpty(Sort) ? "name_desc" : "";
+            ViewData["EmailSortparam"] = Sort == "email_asc" ? "email_desc" : "email_asc";
+            ViewData["DesignationSortparam"] = Sort == "designation_asc" ? "designation_desc" : "designation_asc";
+            ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
+
             var employee = _context.Employees.AsQueryable();
             if (!string.IsNullOrEmpty(Search))
             {
@@ -28,6 +34,34 @@ namespace TeamPortal.NET.Controllers
                     e.LastName.Contains(Search) ||
                     e.Email.Contains(Search));
             }
+            switch(Sort)
+            {
+                case "name_desc":
+                    employee = employee.OrderByDescending(e => e.FirstName).ThenByDescending(e => e.LastName);
+                    break;
+                case "email_asc":
+                    employee = employee.OrderBy(e => e.Email);
+                    break;
+                case "email_desc":
+                    employee = employee.OrderByDescending(e => e.Email);
+                    break;
+                case "designation_asc":
+                    employee = employee.OrderBy(e => e.Designation);
+                    break;
+                case "designation_desc":
+                    employee = employee.OrderByDescending(e => e.Designation);
+                    break;
+                case "department_asc":
+                    employee = employee.OrderBy(e => e.DepartmentId);
+                    break;
+                case "department_desc":
+                    employee = employee.OrderByDescending(e => e.DepartmentId);
+                    break;
+                default:
+                    employee = employee.OrderBy(e => e.FirstName).ThenBy(e => e.LastName);
+                    break;
+            }
+
             return View(employee.ToList());
         }
         [HttpGet]
