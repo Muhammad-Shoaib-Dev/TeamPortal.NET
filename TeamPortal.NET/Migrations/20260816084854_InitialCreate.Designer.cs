@@ -12,7 +12,7 @@ using TeamPortal.NET.Data;
 namespace TeamPortal.NET.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260813081658_InitialCreate")]
+    [Migration("20260816084854_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,8 +27,11 @@ namespace TeamPortal.NET.Migrations
 
             modelBuilder.Entity("TeamPortal.NET.Models.Department", b =>
                 {
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
 
                     b.Property<string>("DepartmentName")
                         .HasColumnType("nvarchar(max)");
@@ -53,29 +56,48 @@ namespace TeamPortal.NET.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Designation")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("PhoneNumber")
+                    b.Property<long>("PhoneNumber")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Salary")
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("DepartmentId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("TeamPortal.NET.Models.Employee", b =>
+                {
+                    b.HasOne("TeamPortal.NET.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
                 });
 #pragma warning restore 612, 618
         }

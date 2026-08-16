@@ -20,6 +20,7 @@ namespace TeamPortal.NET.Models
         public DateTime? DateOfJoining { get; set; }
         [ForeignKey("DepartmentId")]
         public int DepartmentId { get; set; }
+        public Department? Department { get; set; }
         public bool? IsActive { get; set; }
         public string? ProfilePicture { get; set; }
 

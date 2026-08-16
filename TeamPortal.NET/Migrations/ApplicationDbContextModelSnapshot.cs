@@ -24,8 +24,11 @@ namespace TeamPortal.NET.Migrations
 
             modelBuilder.Entity("TeamPortal.NET.Models.Department", b =>
                 {
-                    b.Property<string>("DepartmentId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
 
                     b.Property<string>("DepartmentName")
                         .HasColumnType("nvarchar(max)");
@@ -78,7 +81,20 @@ namespace TeamPortal.NET.Migrations
 
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("DepartmentId");
+
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("TeamPortal.NET.Models.Employee", b =>
+                {
+                    b.HasOne("TeamPortal.NET.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,7 +14,8 @@ namespace TeamPortal.NET.Controllers
         {
           this._context = _context;
         }
-        public IActionResult Index(string Search , string Sort)
+        public IActionResult Index(string Search , string Sort , string Department , string Designation ,bool? isActive ,
+           Decimal? minSalary, Decimal? maxSalary)
         {
             ViewData["CurrentFilter"] = Search;
 
@@ -34,7 +35,28 @@ namespace TeamPortal.NET.Controllers
                     e.LastName.Contains(Search) ||
                     e.Email.Contains(Search));
             }
-            switch(Sort)
+            if(!string.IsNullOrEmpty(Department))
+            {
+               employee = employee.Where(e=>e.Department.DepartmentName == Department);
+            }
+            if (!string.IsNullOrEmpty(Designation))
+            {
+                employee = employee.Where(e => e.Designation == Designation);
+            }
+            if (isActive.HasValue)
+            {
+                employee= employee.Where(e => e.IsActive == isActive.Value);
+            }
+            if (minSalary.HasValue)
+            {
+                employee = employee.Where(e => e.Salary >= minSalary.Value);
+            }
+            if (maxSalary.HasValue)
+            {
+                employee = employee.Where(e => e.Salary <= maxSalary.Value);
+            }
+
+            switch (Sort)
             {
                 case "name_desc":
                     employee = employee.OrderByDescending(e => e.FirstName).ThenByDescending(e => e.LastName);

@@ -20,6 +20,7 @@
             <th><a asp-action="Index" asp-route-Sort="@ViewData["EmailSortparam"]">Email</a></th>
             <th><a asp-action="Index" asp-route-Sort="@ViewData["DepartmentIDSortparam"]">Department ID</a></th>
             <th><a asp-action="Index" asp-route-Sort="@ViewData["DesignationSortparam"]">Designation</a></th>
+            <th>Department</th>
         </tr>
     </thead>
     <tbody>
@@ -30,7 +31,8 @@
                 <td>@employee.FirstName @employee.LastName</td>
                 <td>@employee.Email</td>
                 <td>@employee.DepartmentId</td>
-                <td>@employee.Designation</td>
+                <td>@employee.Designation</td>            
+                <td>@employee.Department?.DepartmentName</td> 
                 <td>
                     <a asp-controller="Employee" asp-action="Edit" asp-route-id="@employee.EmployeeId" class="btn btn-secondary">Edit</a>
                     <a asp-controller="Employee" asp-action="Delete" asp-route-id="@employee.EmployeeId" class="btn btn-danger">Delete</a>
