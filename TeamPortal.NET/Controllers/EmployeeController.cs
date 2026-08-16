@@ -14,10 +14,21 @@ namespace TeamPortal.NET.Controllers
         {
           this._context = _context;
         }
-        public IActionResult Index()
+        public IActionResult Index(string Search)
         {
-            IEnumerable<Employee> employees = _context.Employees.ToList();
-            return View(employees);
+            ViewData["CurrentFilter"] = Search;
+            var employee = _context.Employees.AsQueryable();
+            if (!string.IsNullOrEmpty(Search))
+            {
+                bool Isnumeric = int.TryParse(Search, out int searchid);
+                employee = employee.Where(e =>
+                    (Isnumeric && e.EmployeeId == searchid) ||  
+                    e.Designation.Contains(Search) ||
+                    e.FirstName.Contains(Search) ||
+                    e.LastName.Contains(Search) ||
+                    e.Email.Contains(Search));
+            }
+            return View(employee.ToList());
         }
         [HttpGet]
         public IActionResult Create()
