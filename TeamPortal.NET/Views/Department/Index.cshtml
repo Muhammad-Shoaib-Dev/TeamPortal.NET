@@ -1,0 +1,25 @@
+﻿@model IEnumerable<TeamPortal.NET.Models.Department>
+<h1>Departments</h1>
+
+<table class="table">
+    <a asp-action="Create" class="btn btn-primary">Create New   Department</a>
+<thead>
+    <tr>
+        <th>Department Id</th>
+        <th>Department Name</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach (var department in Model)
+    {
+        <tr>
+            <td>@department.DepartmentId</td>
+            <td>@department.DepartmentName</td>
+            <td>
+            <a asp-action="Edit" asp-route-id="@department.DepartmentId">Edit</a> |
+            <a asp-action="Delete" asp-route-id="@department.DepartmentId">Delete</a>
+            </td>
+        </tr>
+    }
+</tbody>
+</table>

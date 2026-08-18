@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
@@ -24,7 +25,7 @@ namespace TeamPortal.NET.Controllers
             ViewData["DesignationSortparam"] = Sort == "designation_asc" ? "designation_desc" : "designation_asc";
             ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
 
-            var employee = _context.Employees.AsQueryable();
+            var employee = _context.Employees.Include(e => e.Department).AsQueryable();
             if (!string.IsNullOrEmpty(Search))
             {
                 bool Isnumeric = int.TryParse(Search, out int searchid);
@@ -89,11 +90,14 @@ namespace TeamPortal.NET.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+            ViewData["Designation"] = new SelectList(new List<string> { "Manager","HR", "Developer", "Designer"});
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> CreateAsync(Employee emp, IFormFile profileImage)
         {
+          
             if (!ModelState.IsValid)
             {
                 return View(emp);  
@@ -123,6 +127,8 @@ namespace TeamPortal.NET.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
+            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+            ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" });
             var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
             if (employee == null)
             {
@@ -133,7 +139,8 @@ namespace TeamPortal.NET.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Employee emp, IFormFile profileImage)
         {
-            ModelState.Remove("ProfilePicture");   
+            ModelState.Remove("ProfilePicture");
+            ModelState.Remove("Department");  
 
             if (ModelState.IsValid)
             {
@@ -179,6 +186,10 @@ namespace TeamPortal.NET.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            // Yeh block missing tha — dropdowns dobara set karein
+            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", emp.DepartmentId);
+            ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" }, emp.Designation);
             return View(emp);
         }
         [HttpGet]
