@@ -26,6 +26,7 @@ namespace TeamPortal.NET.Controllers
             ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
 
             var employee = _context.Employees.Include(e => e.Department).AsQueryable();
+            // Search logic based on the provided search term
             if (!string.IsNullOrEmpty(Search))
             {
                 bool Isnumeric = int.TryParse(Search, out int searchid);
@@ -36,7 +37,8 @@ namespace TeamPortal.NET.Controllers
                     e.LastName.Contains(Search) ||
                     e.Email.Contains(Search));
             }
-            if(!string.IsNullOrEmpty(Department))
+            //Filtering logic based on the provided parameters
+            if (!string.IsNullOrEmpty(Department))
             {
                employee = employee.Where(e=>e.Department.DepartmentName == Department);
             }
@@ -56,7 +58,7 @@ namespace TeamPortal.NET.Controllers
             {
                 employee = employee.Where(e => e.Salary <= maxSalary.Value);
             }
-
+            //Sorting logic based on the Sort parameter
             switch (Sort)
             {
                 case "name_desc":
@@ -91,7 +93,7 @@ namespace TeamPortal.NET.Controllers
         public IActionResult Create()
         {
             ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
-            ViewData["Designation"] = new SelectList(new List<string> { "Manager","HR", "Developer", "Designer"});
+            ViewData["Designations"] = new SelectList(new List<string> { "Team Manager","HR", "Developer", "Designer","Tester","Intern"});
             return View();
         }
         [HttpPost]
@@ -100,6 +102,8 @@ namespace TeamPortal.NET.Controllers
           
             if (!ModelState.IsValid)
             {
+                ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+                ViewData["Designations"] = new SelectList(new List<string> { "Team Manager", "HR", "Developer", "Designer", "Tester", "Intern" });
                 return View(emp);  
             }
 
@@ -143,7 +147,9 @@ namespace TeamPortal.NET.Controllers
             ModelState.Remove("Department");  
 
             if (ModelState.IsValid)
+
             {
+
                 if (profileImage != null && profileImage.Length > 0)
                 {
                     string FileName = Guid.NewGuid().ToString() + Path.GetExtension(profileImage.FileName);
