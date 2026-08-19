@@ -1,26 +1,63 @@
-﻿@model IEnumerable<TeamPortal.NET.Models.Employee>
+﻿@model IEnumerable<Employee>
 
 <h2>Employees</h2>
 
+<a asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-3">Create Employee</a>
+
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label">Search</label>
+            <input type="text" name="Search"
+                   value="@ViewData["CurrentFilter"]"
+                   placeholder="Search by name, email..."
+                   class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Department</label>
+            <select name="Department" asp-items="@((SelectList)ViewData["Departments"])" class="form-control">
+                <option value="">All Departments</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Designation</label>
+            <select name="Designation" asp-items="@((SelectList)ViewData["Designations"])" class="form-control">
+                <option value="">All Designations</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Status</label>
+            <select name="isActive" class="form-control">
+                <option value="">All Statuses</option>
+                <option value="true" selected="@(ViewData["isActive"]?.ToString() == "True")">Active</option>
+                <option value="false" selected="@(ViewData["isActive"]?.ToString() == "False")">Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Min Salary</label>
+            <input type="number" name="minSalary" value="@ViewData["minSalary"]" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Max Salary</label>
+            <input type="number" name="maxSalary" value="@ViewData["maxSalary"]" class="form-control" />
+        </div>
+        <div class="col-md-2 mt-2">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a asp-action="Index" class="btn btn-secondary">Clear</a>
+        </div>
+    </div>
+</form>
+
 <table class="table">
-            <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">Create Employee</a>
     <thead>
         <tr>
-            <form asp-action="Index" method="get">
-                <input type="text" name="Search"
-                       value="@ViewData["CurrentFilter"]"
-                       placeholder="Search by name, email, department..."
-                       class="form-control" />
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
-        </tr>
-        <tr>
-            <th>Profile photo </th>
+            <th>Profile photo</th>
             <th><a asp-action="Index" asp-route-Sort="@ViewData["NameSortparam"]">Name</a></th>
             <th><a asp-action="Index" asp-route-Sort="@ViewData["EmailSortparam"]">Email</a></th>
-            <th><a asp-action="Index" asp-route-Sort="@ViewData["DepartmentIDSortparam"]">Department ID</a></th>
+            <th>Department ID</th>
             <th><a asp-action="Index" asp-route-Sort="@ViewData["DesignationSortparam"]">Designation</a></th>
-            <th>Department</th>
+            <th><a asp-action="Index" asp-route-Sort="@ViewData["DepartmentIDSortparam"]">Department</a></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -31,8 +68,8 @@
                 <td>@employee.FirstName @employee.LastName</td>
                 <td>@employee.Email</td>
                 <td>@employee.DepartmentId</td>
-                <td>@employee.Designation</td>            
-                <td>@employee.Department?.DepartmentName</td> 
+                <td>@employee.Designation</td>
+                <td>@employee.Department?.DepartmentName</td>
                 <td>
                     <a asp-controller="Employee" asp-action="Edit" asp-route-id="@employee.EmployeeId" class="btn btn-secondary">Edit</a>
                     <a asp-controller="Employee" asp-action="Delete" asp-route-id="@employee.EmployeeId" class="btn btn-danger">Delete</a>

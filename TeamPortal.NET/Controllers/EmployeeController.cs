@@ -15,8 +15,8 @@ namespace TeamPortal.NET.Controllers
         {
           this._context = _context;
         }
-        public IActionResult Index(string Search , string Sort , string Department , string Designation ,bool? isActive ,
-           Decimal? minSalary, Decimal? maxSalary)
+        public IActionResult Index(string Search, string Sort, string Department, string Designation, bool? isActive,
+    Decimal? minSalary, Decimal? maxSalary)
         {
             ViewData["CurrentFilter"] = Search;
 
@@ -25,22 +25,31 @@ namespace TeamPortal.NET.Controllers
             ViewData["DesignationSortparam"] = Sort == "designation_asc" ? "designation_desc" : "designation_asc";
             ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
 
+            // Filtering keys
+            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentName", "DepartmentName", Department);
+            ViewData["Designations"] = new SelectList(new List<string> { "Team Manager", "HR", "Developer", "Designer", "Tester", "Intern" }, Designation);
+            ViewData["isActive"] = isActive;
+            ViewData["minSalary"] = minSalary;
+            ViewData["maxSalary"] = maxSalary;
+
             var employee = _context.Employees.Include(e => e.Department).AsQueryable();
-            // Search logic based on the provided search term
+
+            // Search logic
             if (!string.IsNullOrEmpty(Search))
             {
                 bool Isnumeric = int.TryParse(Search, out int searchid);
                 employee = employee.Where(e =>
-                    (Isnumeric && e.EmployeeId == searchid) ||  
+                    (Isnumeric && e.EmployeeId == searchid) ||
                     e.Designation.Contains(Search) ||
                     e.FirstName.Contains(Search) ||
                     e.LastName.Contains(Search) ||
                     e.Email.Contains(Search));
             }
-            //Filtering logic based on the provided parameters
+
+            // Filtering logic
             if (!string.IsNullOrEmpty(Department))
             {
-               employee = employee.Where(e=>e.Department.DepartmentName == Department);
+                employee = employee.Where(e => e.Department.DepartmentName == Department);
             }
             if (!string.IsNullOrEmpty(Designation))
             {
@@ -48,7 +57,7 @@ namespace TeamPortal.NET.Controllers
             }
             if (isActive.HasValue)
             {
-                employee= employee.Where(e => e.IsActive == isActive.Value);
+                employee = employee.Where(e => e.IsActive == isActive.Value);
             }
             if (minSalary.HasValue)
             {
@@ -58,7 +67,8 @@ namespace TeamPortal.NET.Controllers
             {
                 employee = employee.Where(e => e.Salary <= maxSalary.Value);
             }
-            //Sorting logic based on the Sort parameter
+
+            // Sorting logic
             switch (Sort)
             {
                 case "name_desc":
@@ -77,10 +87,10 @@ namespace TeamPortal.NET.Controllers
                     employee = employee.OrderByDescending(e => e.Designation);
                     break;
                 case "department_asc":
-                    employee = employee.OrderBy(e => e.DepartmentId);
+                    employee = employee.OrderBy(e => e.Department);
                     break;
                 case "department_desc":
-                    employee = employee.OrderByDescending(e => e.DepartmentId);
+                    employee = employee.OrderByDescending(e => e.Department);
                     break;
                 default:
                     employee = employee.OrderBy(e => e.FirstName).ThenBy(e => e.LastName);
