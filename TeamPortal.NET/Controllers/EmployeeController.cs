@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
-using TeamPortal.NET.Services;
+using TeamPortal.NET.Services.Interfaces;
 
 namespace TeamPortal.NET.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly EmployeeService _employeeService;
+        private readonly IEmployeeService _employeeService;
         private readonly ApplicationDbContext _context;
-        public EmployeeController(ApplicationDbContext _context , EmployeeService _employeeService)
+        public EmployeeController(ApplicationDbContext _context , IEmployeeService _employeeService)
         {
           this._context = _context;
           this._employeeService = _employeeService;
