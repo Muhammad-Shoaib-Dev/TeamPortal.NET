@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
-using TeamPortal.NET.Models.ViewModel;
 using TeamPortal.NET.Services;
 
 namespace TeamPortal.NET.Controllers
@@ -18,7 +17,7 @@ namespace TeamPortal.NET.Controllers
           this._employeeService = _employeeService;
         }
         public async Task<IActionResult> Index(string Search, string Sort, string Department, string Designation, bool? isActive,
-    Decimal? minSalary, Decimal? maxSalary , int? pageIndex)
+        Decimal? minSalary, Decimal? maxSalary , int? pageIndex)
         {
             ViewData["CurrentFilter"] = Search;
 
@@ -170,7 +169,6 @@ namespace TeamPortal.NET.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Yeh block missing tha — dropdowns dobara set karein
             ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", emp.DepartmentId);
             ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" }, emp.Designation);
             return View(emp);

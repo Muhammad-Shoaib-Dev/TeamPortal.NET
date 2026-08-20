@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
+using TeamPortal.NET.Services;
+using TeamPortal.NET.Services.Interfaces;
 
 namespace TeamPortal.NET
 {
@@ -14,6 +16,7 @@ namespace TeamPortal.NET
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddScoped<IEmployeeService,EmployeeService>();
             var app = builder.Build();
             app.UseStaticFiles();
 
