@@ -4,15 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
 using TeamPortal.NET.Models.ViewModel;
+using TeamPortal.NET.Services;
 
 namespace TeamPortal.NET.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly EmployeeService _employeeService;
         private readonly ApplicationDbContext _context;
-        public EmployeeController(ApplicationDbContext _context)
+        public EmployeeController(ApplicationDbContext _context , EmployeeService _employeeService)
         {
           this._context = _context;
+          this._employeeService = _employeeService;
         }
         public async Task<IActionResult> Index(string Search, string Sort, string Department, string Designation, bool? isActive,
     Decimal? minSalary, Decimal? maxSalary , int? pageIndex)
@@ -24,81 +27,17 @@ namespace TeamPortal.NET.Controllers
             ViewData["DesignationSortparam"] = Sort == "designation_asc" ? "designation_desc" : "designation_asc";
             ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
 
-            // Filtering keys
             ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentName", "DepartmentName", Department);
             ViewData["Designations"] = new SelectList(new List<string> { "Team Manager", "HR", "Developer", "Designer", "Tester", "Intern" }, Designation);
             ViewData["isActive"] = isActive;
             ViewData["minSalary"] = minSalary;
             ViewData["maxSalary"] = maxSalary;
 
-            var employee = _context.Employees.Include(e => e.Department).AsQueryable();
-
-            // Search logic
-            if (!string.IsNullOrEmpty(Search))
-            {
-                bool Isnumeric = int.TryParse(Search, out int searchid);
-                employee = employee.Where(e =>
-                    (Isnumeric && e.EmployeeId == searchid) ||
-                    e.Designation.Contains(Search) ||
-                    e.FirstName.Contains(Search) ||
-                    e.LastName.Contains(Search) ||
-                    e.Email.Contains(Search));
-            }
-
-            // Filtering logic
-            if (!string.IsNullOrEmpty(Department))
-            {
-                employee = employee.Where(e => e.Department.DepartmentName == Department);
-            }
-            if (!string.IsNullOrEmpty(Designation))
-            {
-                employee = employee.Where(e => e.Designation == Designation);
-            }
-            if (isActive.HasValue)
-            {
-                employee = employee.Where(e => e.IsActive == isActive.Value);
-            }
-            if (minSalary.HasValue)
-            {
-                employee = employee.Where(e => e.Salary >= minSalary.Value);
-            }
-            if (maxSalary.HasValue)
-            {
-                employee = employee.Where(e => e.Salary <= maxSalary.Value);
-            }
-
-            // Sorting logic
-            switch (Sort)
-            {
-                case "name_desc":
-                    employee = employee.OrderByDescending(e => e.FirstName).ThenByDescending(e => e.LastName);
-                    break;
-                case "email_asc":
-                    employee = employee.OrderBy(e => e.Email);
-                    break;
-                case "email_desc":
-                    employee = employee.OrderByDescending(e => e.Email);
-                    break;
-                case "designation_asc":
-                    employee = employee.OrderBy(e => e.Designation);
-                    break;
-                case "designation_desc":
-                    employee = employee.OrderByDescending(e => e.Designation);
-                    break;
-                case "department_asc":
-                    employee = employee.OrderBy(e => e.Department);
-                    break;
-                case "department_desc":
-                    employee = employee.OrderByDescending(e => e.Department.DepartmentName);
-                    break;
-                default:
-                    employee = employee.OrderBy(e => e.FirstName).ThenBy(e => e.LastName);
-                    break;
-            }
-            // Pagination logic
             int pageSize = 5;
+            var result = await _employeeService.GetEmployeesAsync(
+                Search, Sort, Department, Designation, isActive, minSalary, maxSalary, pageIndex ?? 1, pageSize);
 
-            return View(await PaginatedListVM<Employee>.CreateAsync(employee, pageIndex ?? 1, pageSize));
+            return View(result);
         }
         [HttpGet]
         public IActionResult Create()
