@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
+using TeamPortal.NET.Models.ViewModel;
 
 namespace TeamPortal.NET.Controllers
 {
@@ -15,8 +14,8 @@ namespace TeamPortal.NET.Controllers
         {
           this._context = _context;
         }
-        public IActionResult Index(string Search, string Sort, string Department, string Designation, bool? isActive,
-    Decimal? minSalary, Decimal? maxSalary)
+        public async Task<IActionResult> Index(string Search, string Sort, string Department, string Designation, bool? isActive,
+    Decimal? minSalary, Decimal? maxSalary , int? pageIndex)
         {
             ViewData["CurrentFilter"] = Search;
 
@@ -90,14 +89,16 @@ namespace TeamPortal.NET.Controllers
                     employee = employee.OrderBy(e => e.Department);
                     break;
                 case "department_desc":
-                    employee = employee.OrderByDescending(e => e.Department);
+                    employee = employee.OrderByDescending(e => e.Department.DepartmentName);
                     break;
                 default:
                     employee = employee.OrderBy(e => e.FirstName).ThenBy(e => e.LastName);
                     break;
             }
+            // Pagination logic
+            int pageSize = 5;
 
-            return View(employee.ToList());
+            return View(await PaginatedListVM<Employee>.CreateAsync(employee, pageIndex ?? 1, pageSize));
         }
         [HttpGet]
         public IActionResult Create()
