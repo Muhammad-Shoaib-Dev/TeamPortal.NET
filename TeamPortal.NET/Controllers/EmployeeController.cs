@@ -102,6 +102,7 @@ namespace TeamPortal.NET.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            
             ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
             ViewData["Designations"] = new SelectList(new List<string> { "Team Manager","HR", "Developer", "Designer","Tester","Intern"});
             return View();
@@ -109,7 +110,20 @@ namespace TeamPortal.NET.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(Employee emp, IFormFile profileImage)
         {
-          
+            ModelState.Remove("Department");
+            if(profileImage != null && profileImage.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(profileImage.FileName).ToLowerInvariant();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("profileImage", "Invalid file type. Please upload a JPG, JPEG, PNG, or GIF file.");
+                }
+                if (profileImage.Length > 2 * 1024 * 1024) 
+                {
+                    ModelState.AddModelError("profileImage", "File size exceeds the 2MB limit.");
+                }
+            }
             if (!ModelState.IsValid)
             {
                 ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
@@ -154,7 +168,20 @@ namespace TeamPortal.NET.Controllers
         public async Task<IActionResult> Edit(Employee emp, IFormFile profileImage)
         {
             ModelState.Remove("ProfilePicture");
-            ModelState.Remove("Department");  
+            ModelState.Remove("Department");
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var extension = Path.GetExtension(profileImage.FileName).ToLowerInvariant();
+                if (!allowedExtensions.Contains(extension))
+                {
+                    ModelState.AddModelError("profileImage", "Invalid file type. Please upload a JPG, JPEG, PNG, or GIF file.");
+                }
+                if (profileImage.Length > 2 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("profileImage", "File size exceeds the 2MB limit.");
+                }
+            }
 
             if (ModelState.IsValid)
 
