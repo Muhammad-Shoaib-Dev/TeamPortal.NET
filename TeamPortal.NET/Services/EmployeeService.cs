@@ -2,20 +2,21 @@
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
 using TeamPortal.NET.Models.ViewModel;
+using TeamPortal.NET.Repositries.IRepositries;
 using TeamPortal.NET.Services.Interfaces;
 
 namespace TeamPortal.NET.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly ApplicationDbContext _context;
-        public EmployeeService(ApplicationDbContext context)
+        private readonly IEmployeeRepositries _employeeRepositries;
+        public EmployeeService(IEmployeeRepositries employeeRepositries)
         {
-            _context = context;
+            _employeeRepositries = employeeRepositries;
         }
         public Task<PaginatedListVM<Employee>> GetEmployeesAsync(string Search, string Sort, string Department, string Designation, bool? isActive, decimal? minSalary, decimal? maxSalary, int pageIndex, int pageSize)
         {
-            var employee = _context.Employees.Include(e => e.Department).AsQueryable();
+            var employee = _employeeRepositries.GetAllEmployees();
 
             // Search logic
             if (!string.IsNullOrEmpty(Search))
