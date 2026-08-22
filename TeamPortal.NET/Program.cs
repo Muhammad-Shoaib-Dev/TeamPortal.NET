@@ -20,6 +20,7 @@ namespace TeamPortal.NET
 
             builder.Services.AddScoped<IEmployeeRepositries, EmployeeRepositry>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IDepartmentRepositry, DepartmentRepositry>();
             var app = builder.Build();
             app.UseStaticFiles();
 

@@ -3,17 +3,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
+using TeamPortal.NET.Repositries.IRepositries;
 using TeamPortal.NET.Services.Interfaces;
 
 namespace TeamPortal.NET.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly IDepartmentRepositry _departmentRepositry;
+        private readonly IEmployeeRepositries _employeeRepositries;
         private readonly IEmployeeService _employeeService;
-        private readonly ApplicationDbContext _context;
-        public EmployeeController(ApplicationDbContext _context , IEmployeeService _employeeService)
+        public EmployeeController(IDepartmentRepositry _departmentRepositry, IEmployeeRepositries _employeeRepositries, IEmployeeService _employeeService)
         {
-          this._context = _context;
+          this._departmentRepositry = _departmentRepositry;
+          this._employeeRepositries = _employeeRepositries;
           this._employeeService = _employeeService;
         }
         public async Task<IActionResult> Index(string Search, string Sort, string Department, string Designation, bool? isActive,
@@ -26,7 +29,7 @@ namespace TeamPortal.NET.Controllers
             ViewData["DesignationSortparam"] = Sort == "designation_asc" ? "designation_desc" : "designation_asc";
             ViewData["DepartmentIDSortparam"] = Sort == "department_asc" ? "department_desc" : "department_asc";
 
-            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentName", "DepartmentName", Department);
+            ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName", Department);
             ViewData["Designations"] = new SelectList(new List<string> { "Team Manager", "HR", "Developer", "Designer", "Tester", "Intern" }, Designation);
             ViewData["isActive"] = isActive;
             ViewData["minSalary"] = minSalary;
@@ -42,7 +45,7 @@ namespace TeamPortal.NET.Controllers
         public IActionResult Create()
         {
             
-            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+            ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName");
             ViewData["Designations"] = new SelectList(new List<string> { "Team Manager","HR", "Developer", "Designer","Tester","Intern"});
             return View();
         }
@@ -65,7 +68,7 @@ namespace TeamPortal.NET.Controllers
             }
             if (!ModelState.IsValid)
             {
-                ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+                ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName");
                 ViewData["Designations"] = new SelectList(new List<string> { "Team Manager", "HR", "Developer", "Designer", "Tester", "Intern" });
                 return View(emp);  
             }
@@ -86,17 +89,17 @@ namespace TeamPortal.NET.Controllers
 
                 emp.ProfilePicture = "/images/Employee/" + FileName;
             }
-
-            _context.Employees.Add(emp);
-            _context.SaveChanges();
+            
+            await _employeeRepositries.AddAsync(emp);
+            await _employeeRepositries.SaveChangesAsync();
             return RedirectToAction("Index");
         }
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName");
+            ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName");
             ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" });
-            var employee = _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
+            var employee = _employeeRepositries.GetByIdAsync(id).Result;
             if (employee == null)
             {
                 return NotFound();
@@ -134,7 +137,7 @@ namespace TeamPortal.NET.Controllers
                     if (!Directory.Exists(FilePath))
                         Directory.CreateDirectory(FilePath);
 
-                    var existingEmployee = _context.Employees.AsNoTracking()
+                    var existingEmployee = _employeeRepositries.GetAllEmployees().AsNoTracking()
                         .FirstOrDefault(e => e.EmployeeId == emp.EmployeeId);
 
                     string ImagePath = Path.Combine(FilePath, FileName);
@@ -156,7 +159,7 @@ namespace TeamPortal.NET.Controllers
                 }
                 else
                 {
-                    var existingEmployee = _context.Employees.AsNoTracking()
+                    var existingEmployee = _employeeRepositries.GetAllEmployees().AsNoTracking()
                         .FirstOrDefault(e => e.EmployeeId == emp.EmployeeId);
                     if (existingEmployee != null)
                     {
@@ -164,19 +167,19 @@ namespace TeamPortal.NET.Controllers
                     }
                 }
 
-                _context.Employees.Update(emp);
-                _context.SaveChanges();
+                _employeeRepositries.UpdateEmployee(emp);
+                await _employeeRepositries.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewData["Departments"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentName", emp.DepartmentId);
+            ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName", emp.DepartmentId);
             ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" }, emp.Designation);
             return View(emp);
         }
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            Employee? emp = _context.Employees.Find(id);
+            Employee? emp = _employeeRepositries.GetByIdAsync(id).Result;
             if (emp == null)
             {
                 return NotFound();
@@ -186,9 +189,9 @@ namespace TeamPortal.NET.Controllers
         }
         [HttpPost]
         [ActionName("Delete")]
-        public IActionResult DeleteConfirm(int id,IFormFile profileImage)
+        public async Task<IActionResult> DeleteConfirm(int id,IFormFile profileImage)
         {
-            var existingEmployee = _context.Employees.AsNoTracking()
+            var existingEmployee = _employeeRepositries.GetAllEmployees().AsNoTracking()
                         .FirstOrDefault(e => e.EmployeeId == id);
             if (existingEmployee != null && !string.IsNullOrEmpty(existingEmployee.ProfilePicture))
             {
@@ -198,13 +201,13 @@ namespace TeamPortal.NET.Controllers
                 if (System.IO.File.Exists(oldImagePath))
                     System.IO.File.Delete(oldImagePath);
             }
-            Employee? emp = _context.Employees.Find(id);
+            Employee? emp = _employeeRepositries.GetByIdAsync(id).Result;
             if (emp == null)
             {
                 return NotFound();
             }
-            _context.Employees.Remove(emp);
-            _context.SaveChanges();
+            _employeeRepositries.DeleteEmployee(emp);
+            await _employeeRepositries.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }
