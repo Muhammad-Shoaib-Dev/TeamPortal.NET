@@ -13,5 +13,6 @@ namespace TeamPortal.NET.Data
 
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
     }
 }

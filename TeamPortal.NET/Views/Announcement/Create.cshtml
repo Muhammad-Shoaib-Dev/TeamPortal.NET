@@ -1,0 +1,30 @@
+﻿@model Announcement
+
+<h2>New Announcement</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Message</label>
+        <textarea asp-for="Message" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label class="form-check-label">Active</label>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Expiry Date (optional)</label>
+        <input asp-for="ExpiryDate" class="form-control" type="date" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

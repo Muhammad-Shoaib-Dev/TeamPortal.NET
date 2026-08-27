@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TeamPortal.NET.Data;
@@ -8,6 +9,7 @@ using TeamPortal.NET.Services.Interfaces;
 
 namespace TeamPortal.NET.Controllers
 {
+[Authorize]
     public class EmployeeController : Controller
     {
         private readonly IDepartmentRepositry _departmentRepositry;
@@ -35,12 +37,13 @@ namespace TeamPortal.NET.Controllers
             ViewData["minSalary"] = minSalary;
             ViewData["maxSalary"] = maxSalary;
 
-            int pageSize = 5;
+            int pageSize = 10;
             var result = await _employeeService.GetEmployeesAsync(
                 Search, Sort, Department, Designation, isActive, minSalary, maxSalary, pageIndex ?? 1, pageSize);
 
             return View(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -94,11 +97,12 @@ namespace TeamPortal.NET.Controllers
             await _employeeRepositries.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
             ViewData["Departments"] = new SelectList(_departmentRepositry.GetAll(), "DepartmentId", "DepartmentName");
-            ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" });
+            ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer","Tester", "Intern" });
             var employee = _employeeRepositries.GetByIdAsync(id).Result;
             if (employee == null)
             {
@@ -176,6 +180,7 @@ namespace TeamPortal.NET.Controllers
             ViewData["Designation"] = new SelectList(new List<string> { "Manager", "HR", "Developer", "Designer" }, emp.Designation);
             return View(emp);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Delete(int id)
         {

@@ -1,8 +1,89 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<Announcement>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .announcements .announcement-card {
+        background: #ffffff;
+        border: 1px solid #eef0f4;
+        border-left: 4px solid #6366f1;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 14px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        transition: 0.2s;
+    }
+
+        .announcements .announcement-card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+            transform: translateY(-2px);
+        }
+
+    .announcements .announcement-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #111827;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .announcements .announcement-title::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6366f1;
+            display: inline-block;
+        }
+
+    .announcements .announcement-message {
+        color: #4b5563;
+        font-size: 14.5px;
+        margin-bottom: 8px;
+    }
+
+    .announcements .announcement-date {
+        color: #9ca3af;
+        font-size: 12.5px;
+        font-weight: 500;
+    }
+
+    .announcements .section-heading {
+        font-weight: 700;
+        font-size: 20px;
+        color: #111827;
+        margin-bottom: 16px;
+    }
+
+    .announcements .empty-state {
+        background: #f9fafb;
+        border: 1px dashed #e5e7eb;
+        border-radius: 14px;
+        padding: 30px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 14.5px;
+    }
+</style>
+
+<div class="announcements mb-4">
+    @if (Model != null && Model.Any())
+    {
+        <h4 class="section-heading">📢 Announcements</h4>
+
+        @foreach (var item in Model)
+        {
+            <div class="announcement-card">
+                <div class="announcement-title">@item.Title</div>
+                <p class="announcement-message">@item.Message</p>
+                <small class="announcement-date">@item.CreatedDate.ToString("dd MMM yyyy")</small>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            No announcements available right now.
+        </div>
+    }
 </div>

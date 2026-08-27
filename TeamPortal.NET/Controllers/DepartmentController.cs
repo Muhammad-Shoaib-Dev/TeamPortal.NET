@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TeamPortal.NET.Data;
 using TeamPortal.NET.Models;
 
 namespace TeamPortal.NET.Controllers
 {
+    [Authorize (Roles ="Admin")]
     public class DepartmentController : Controller
     {
         private readonly ApplicationDbContext _context;

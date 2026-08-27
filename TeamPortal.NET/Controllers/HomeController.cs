@@ -1,25 +1,25 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using TeamPortal.NET.Models;
+using TeamPortal.NET.Services;
+using TeamPortal.NET.Services.Interfaces;
 
-namespace TeamPortal.NET.Controllers
+[Authorize]
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IAnnouncementService _announcementService;
+
+    public HomeController(IAnnouncementService announcementService)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _announcementService = announcementService;
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    public IActionResult Index()
+    {
+        var announcements = _announcementService.GetActiveAnnouncements();
+        return View(announcements);
+    }
+    public IActionResult Privacy()
+    {
+        return View();
     }
 }

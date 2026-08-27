@@ -1,6 +1,118 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style>
+    .privacy-wrapper {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 20px 0 60px;
+    }
+
+    .privacy-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eef0f4;
+    }
+
+        .privacy-header h1 {
+            font-weight: 800;
+            font-size: 34px;
+            color: #111827;
+            letter-spacing: -0.5px;
+        }
+
+        .privacy-header p.updated {
+            color: #9ca3af;
+            font-size: 13.5px;
+            margin-top: 6px;
+        }
+
+    .privacy-wrapper > p.intro {
+        color: #4b5563;
+        font-size: 15.5px;
+        line-height: 1.7;
+        margin-bottom: 34px;
+    }
+
+    .privacy-section {
+        background: #ffffff;
+        border: 1px solid #eef0f4;
+        border-left: 4px solid #6366f1;
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+    }
+
+        .privacy-section h3 {
+            font-weight: 700;
+            font-size: 17px;
+            color: #111827;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .privacy-section h3::before {
+                content: "";
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #6366f1;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+
+        .privacy-section p {
+            color: #4b5563;
+            font-size: 14.5px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+</style>
+
+<div class="privacy-wrapper">
+    <div class="privacy-header">
+        <h1>@ViewData["Title"]</h1>
+        <p class="updated">Last updated: 2026</p>
+    </div>
+
+    <p class="intro">
+        This Privacy Policy explains how the TeamPortal.NET application collects, uses,
+        and protects your information.
+    </p>
+
+    <div class="privacy-section">
+        <h3>Information We Collect</h3>
+        <p>
+            When you register, we store basic information such as your name, email,
+            and department, so that we can provide you with the app's services.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h3>How We Use Your Information</h3>
+        <p>
+            Your information is used solely for team management and internal
+            communication purposes — it is never shared with any third party.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h3>Data Security</h3>
+        <p>
+            Your data is stored in a secure database, and only authorized
+            administrators/HR personnel have access to it.
+        </p>
+    </div>
+
+    <div class="privacy-section">
+        <h3>Contact Us</h3>
+        <p>
+            If you have any questions about this policy, please contact your
+            app administrator.
+        </p>
+    </div>
+</div>

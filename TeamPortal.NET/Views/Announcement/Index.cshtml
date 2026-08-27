@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TeamPortal.NET.Models.Department>
+﻿@model IEnumerable<Announcement>
 
 <style>
     .page-heading {
@@ -55,6 +55,17 @@
             color: #fff;
         }
 
+    .alert-success-soft {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #047857;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-weight: 500;
+        font-size: 14.5px;
+        margin-bottom: 20px;
+    }
+
     .table-card {
         background: #ffffff;
         border: 1px solid #eef0f4;
@@ -63,11 +74,11 @@
         overflow: hidden;
     }
 
-    .dept-table {
+    .announcement-table {
         margin-bottom: 0;
     }
 
-        .dept-table thead th {
+        .announcement-table thead th {
             background: #f9fafb;
             color: #6b7280;
             font-size: 12.5px;
@@ -76,61 +87,89 @@
             letter-spacing: 0.4px;
             border-bottom: 1px solid #eef0f4;
             padding: 14px 16px;
+            border-top: none;
         }
 
-        .dept-table tbody td {
+        .announcement-table tbody td {
             vertical-align: middle;
             padding: 12px 16px;
             font-size: 14.5px;
             color: #374151;
             border-bottom: 1px solid #f3f4f6;
+            border-top: none;
         }
 
-        .dept-table tbody tr:hover {
+        .announcement-table tbody tr:hover {
             background: #fafaff;
         }
 
-        .dept-table tbody tr:last-child td {
+        .announcement-table tbody tr:last-child td {
             border-bottom: none;
         }
 
-    .dept-name {
+    .announcement-title-cell {
         font-weight: 600;
         color: #111827;
     }
 
-    .dept-id-badge {
-        background: #eef0ff;
-        color: #6366f1;
+    .status-badge {
         font-weight: 600;
         font-size: 12.5px;
-        padding: 4px 10px;
+        padding: 4px 12px;
         border-radius: 20px;
+    }
+
+    .status-active {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .status-inactive {
+        background: #f3f4f6;
+        color: #6b7280;
     }
 </style>
 
-<h1 class="page-heading">Departments</h1>
+<h2 class="page-heading">Manage Announcements</h2>
 
-<a asp-action="Create" class="btn btn-brand mb-4">+ Create New Department</a>
+<a asp-action="Create" class="btn btn-brand mb-4">+ New Announcement</a>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert-success-soft">✓ @TempData["Success"]</div>
+}
 
 <div class="table-card">
-    <table class="table dept-table">
+    <table class="table announcement-table">
         <thead>
             <tr>
-                <th>Department Id</th>
-                <th>Department Name</th>
+                <th>Title</th>
+                <th>Created Date</th>
+                <th>Active</th>
+                <th>Expiry Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var department in Model)
+            @foreach (var item in Model)
             {
                 <tr>
-                    <td><span class="dept-id-badge">#@department.DepartmentId</span></td>
-                    <td class="dept-name">@department.DepartmentName</td>
+                    <td class="announcement-title-cell">@item.Title</td>
+                    <td>@item.CreatedDate.ToString("dd MMM yyyy")</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@department.DepartmentId" class="btn-soft btn-soft-edit">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@department.DepartmentId" class="btn-soft btn-soft-delete">Delete</a>
+                        @if (item.IsActive)
+                        {
+                            <span class="status-badge status-active">Active</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-inactive">Inactive</span>
+                        }
+                    </td>
+                    <td>@(item.ExpiryDate?.ToString("dd MMM yyyy") ?? "-")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.AnnouncementId" class="btn-soft btn-soft-edit">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.AnnouncementId" class="btn-soft btn-soft-delete">Delete</a>
                     </td>
                 </tr>
             }

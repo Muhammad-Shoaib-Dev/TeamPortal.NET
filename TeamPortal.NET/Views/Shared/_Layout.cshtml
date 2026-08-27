@@ -8,12 +8,146 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TeamPortal.NET.styles.css" asp-append-version="true" />
+
+    <style>
+            :root {
+                --brand: #6366f1;
+                --brand-dark: #4f46e5;
+                --ink: #0b1130;
+            }
+
+            body {
+                background-color: #f5f5f7;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            /* ===== Navbar ===== */
+            .navbar {
+                padding: 14px 0;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
+            }
+
+            .navbar-brand {
+                font-weight: 800;
+                font-size: 22px;
+                color: var(--ink) !important;
+                letter-spacing: -0.5px;
+            }
+
+                .navbar-brand span {
+                    color: var(--brand);
+                }
+
+            .nav-link {
+                font-weight: 500;
+                color: #374151 !important;
+                margin: 0 4px;
+                transition: 0.2s;
+            }
+
+                .nav-link:hover {
+                    color: var(--brand) !important;
+                }
+
+            .btn-brand {
+                background-color: var(--brand);
+                border: none;
+                color: #fff;
+                border-radius: 30px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 14px;
+                transition: 0.2s;
+            }
+
+                .btn-brand:hover {
+                    background-color: var(--brand-dark);
+                    color: #fff;
+                }
+
+            .btn-outline-brand {
+                border: 1px solid var(--brand);
+                color: var(--brand);
+                border-radius: 30px;
+                padding: 8px 20px;
+                font-weight: 600;
+                font-size: 14px;
+                background: transparent;
+                transition: 0.2s;
+            }
+
+                .btn-outline-brand:hover {
+                    background-color: var(--brand);
+                    color: #fff;
+                }
+
+            .navbar-text {
+                font-weight: 500;
+                color: #374151;
+                margin-right: 10px;
+            }
+
+            /* ===== Main content ===== */
+            main {
+                flex: 1;
+            }
+
+            /* ===== Footer ===== */
+            footer.site-footer {
+                background-color: var(--ink);
+                color: #cbd5e1;
+                padding: 40px 0 20px;
+                margin-top: 60px;
+            }
+
+                footer.site-footer h5 {
+                    color: #fff;
+                    font-weight: 700;
+                    font-size: 18px;
+                    margin-bottom: 6px;
+                }
+
+                footer.site-footer p {
+                    color: #94a3b8;
+                    font-size: 14px;
+                    margin-bottom: 0;
+                }
+
+                footer.site-footer a {
+                    color: #cbd5e1;
+                    text-decoration: none;
+                    transition: 0.2s;
+                }
+
+                    footer.site-footer a:hover {
+                        color: var(--brand);
+                    }
+
+                footer.site-footer .footer-bottom {
+                    border-top: 1px solid rgba(255,255,255,0.08);
+                    margin-top: 24px;
+                    padding-top: 16px;
+                    font-size: 13px;
+                    color: #64748b;
+                }
+
+                footer.site-footer .developer-credit {
+                    color: #94a3b8;
+                }
+
+                    footer.site-footer .developer-credit strong {
+                        color: var(--brand);
+                        font-weight: 600;
+                    }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TeamPortal.NET</a>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom mb-3">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Team<span>Portal</span>.NET</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,38 +155,75 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
+                            <a class="nav-link" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Announcement" asp-action="Index">Announcement</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
+                            </li>
+                        }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                    <ul class="navbar-nav ml-auto align-items-center">
+                        <li class="nav-item d-flex align-items-center gap-2">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <span class="navbar-text">Hello, @User.Identity.Name!</span>
+                                <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-brand">Logout</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-brand me-2">Login</a>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-brand">Register</a>
+                            }
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="site-footer">
         <div class="container">
-            &copy; 2026 - TeamPortal.NET - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <h5>Team<span style="color:#6366f1;">Portal</span>.NET</h5>
+                    <p>Employee &amp; Department Management, simplified.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="font-size:15px;">Quick Links</h5>
+                    <p><a asp-controller="Home" asp-action="Index">Home</a></p>
+                    <p><a asp-controller="Employee" asp-action="Index">Employees</a></p>
+                    <p><a asp-controller="Home" asp-action="Privacy">Privacy</a></p>
+                </div>
+                <div class="col-md-4">
+                    <h5 style="font-size:15px;">Account</h5>
+                    <p><a asp-controller="Account" asp-action="Login">Login</a></p>
+                    <p><a asp-controller="Account" asp-action="Register">Register</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <span>&copy; 2026 TeamPortal.NET. All Rights Reserved.</span>
+                <span class="developer-credit mt-2 mt-md-0">Developed by <strong>Shoaib</strong></span>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

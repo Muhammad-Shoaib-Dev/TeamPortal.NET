@@ -30,6 +30,7 @@ namespace TeamPortal.NET.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "Employee");
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("index", "Employee");
             }
@@ -65,7 +66,9 @@ namespace TeamPortal.NET.Controllers
             }
             if (result.Succeeded)
             {
+                HttpContext.Session.SetString("UserEmail", model.Email);
                 return RedirectToAction("index", "Employee");
+
             }
             ModelState.AddModelError("", "Invalid login attempt.");
 
